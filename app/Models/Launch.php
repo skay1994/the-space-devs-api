@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Launch extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'uuid', 'status', 'url', 'launch_library_id', 'name', 'slug', 'net', 'window_start', 'window_end',
         'inhold', 'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'webcast_live',
