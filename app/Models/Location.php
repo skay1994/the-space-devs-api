@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Location extends Model
 {
@@ -17,4 +18,9 @@ class Location extends Model
         'total_launch_count' => 'integer',
         'total_landing_count' => 'integer',
     ];
+
+    public function pads(): HasMany
+    {
+        return $this->hasMany(Pad::class);
+    }
 }
