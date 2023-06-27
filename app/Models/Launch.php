@@ -5,13 +5,14 @@ namespace App\Models;
 use App\Enums\Status;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Launch extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'uuid', 'status', 'url', 'launch_library_id', 'name', 'slug', 'net', 'window_start', 'window_end',
+        'uuid', 'status', 'url', 'launch_library_id', 'launch_provider_id', 'name', 'slug', 'net', 'window_start', 'window_end',
         'inhold', 'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'webcast_live',
         'image', 'infographic', 'program'
     ];
@@ -26,4 +27,9 @@ class Launch extends Model
         'tbdtime' => 'datetime',
         'tbddate' => 'datetime',
     ];
+
+    public function provider(): BelongsTo
+    {
+        return $this->belongsTo(LaunchServiceProvider::class, 'launch_provider_id');
+    }
 }
