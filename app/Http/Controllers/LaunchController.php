@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LaunchRequest;
 use App\Http\Resources\LaunchListResource;
 use App\Http\Resources\LaunchResource;
 use App\Models\Launch;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class LaunchController extends Controller
 {
@@ -18,9 +20,13 @@ class LaunchController extends Controller
         return LaunchListResource::collection($launchers);
     }
 
-    public function store(Request $request)
+    public function store(LaunchRequest $request): LaunchResource
     {
-        //
+        $data = $request->safe()->all();
+        $data['slug'] = Str::slug($data['name']);
+
+        $launch = Launch::create($data);
+        return new LaunchResource($launch);
     }
 
     public function show(Launch $launch): LaunchResource
@@ -36,6 +42,6 @@ class LaunchController extends Controller
 
     public function destroy(Launch $launch)
     {
-        //
+        $launch->delete();
     }
 }

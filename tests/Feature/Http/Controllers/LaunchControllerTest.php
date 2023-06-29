@@ -2,6 +2,7 @@
 
 use App\Models\Launch;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 
 it('Get all launchers without token', function () {
@@ -19,7 +20,7 @@ it('Get all launchers', function () {
     $response->assertJsonPath('meta.per_page', 10)
         ->assertJsonPath('meta.total', 20)
         ->assertJsonCount(10, 'data')
-        ->assertJsonStructure(['data' => [['uuid','name', 'provider_name', 'rocket_name']]]);
+        ->assertJsonStructure(['data' => [['uuid', 'name', 'provider_name', 'rocket_name']]]);
 });
 
 it('Get all launchers with pagination limit per_page ', function () {
@@ -34,13 +35,13 @@ it('Get all launchers with pagination limit per_page ', function () {
         ->assertJsonCount($limit, 'data')
         ->assertJsonPath('meta.total', 20)
         ->assertJsonCount($limit, 'data')
-        ->assertJsonStructure(['data' => [['uuid','name', 'provider_name', 'rocket_name']]]);
+        ->assertJsonStructure(['data' => [['uuid', 'name', 'provider_name', 'rocket_name']]]);
 });
 
 it('Get a launch with invalid uuid', function () {
     Sanctum::actingAs(User::factory()->create());
 
-    $this->getJson(route('api.launchers.show', ['launcher' => \Illuminate\Support\Str::uuid()]))
+    $this->getJson(route('api.launchers.show', ['launcher' => Str::uuid()]))
         ->assertNotFound();
 });
 
@@ -57,4 +58,65 @@ it('Get a launch', function () {
         ->assertJsonPath('data.rocket.name', $launch->rocket->name)
         ->assertJsonPath('data.status', $launch->status->value)
         ->assertJsonPath('data.status_name', $launch->status->name());
+});
+
+it('Create a launch', function () {
+    Sanctum::actingAs(User::factory()->create());
+    $launch = Launch::factory()->make();
+    unset($launch->slug);
+
+    $response = $this->postJson(route('api.launchers.store'), $launch->toArray())
+        ->assertCreated();
+
+    $response->assertJsonPath('data.name', $launch->name)
+        ->assertJsonPath('data.slug', Str::slug($launch->name))
+        ->assertJsonPath('data.status', $launch->status->value)
+        ->assertJsonPath('data.status_name', $launch->status->name())
+        ->assertJsonPath('data.provider.name', $launch->provider->name)
+        ->assertJsonPath('data.rocket.name', $launch->rocket->name);
+});
+
+it('Create a launch fail by invalid form', function () {
+    Sanctum::actingAs(User::factory()->create());
+    $launch = Launch::factory()->make();
+    $launch->fill([
+        'launch_provider_id' => null,
+        'rocket_id' => null,
+        'name' => null,
+        'url' => null,
+        'status' => null,
+        'inhold' => null,
+    ]);
+
+    $response = $this->postJson(route('api.launchers.store'), $launch->toArray())
+        ->assertUnprocessable();
+
+    $response->assertJsonValidationErrorFor('launch_provider_id')
+        ->assertJsonValidationErrorFor('rocket_id')
+        ->assertJsonValidationErrorFor('name')
+        ->assertJsonValidationErrorFor('url')
+        ->assertJsonValidationErrorFor('status')
+        ->assertJsonValidationErrorFor('inhold');
+});
+
+it('Create a launch failed by invalid rocket_id', function () {
+    Sanctum::actingAs(User::factory()->create());
+    $launch = Launch::factory()->make([
+        'rocket_id' => fake()->randomNumber(3),
+    ]);
+
+    $this->postJson(route('api.launchers.store'), $launch->toArray())
+        ->assertUnprocessable()
+        ->assertJsonValidationErrorFor('rocket_id');
+});
+
+it('Create a launch failed by invalid launch_provider_id', function () {
+    Sanctum::actingAs(User::factory()->create());
+    $launch = Launch::factory()->make([
+        'launch_provider_id' => fake()->randomNumber(3),
+    ]);
+
+    $this->postJson(route('api.launchers.store'), $launch->toArray())
+        ->assertUnprocessable()
+        ->assertJsonValidationErrorFor('launch_provider_id');
 });
