@@ -36,3 +36,25 @@ it('Get all launchers with pagination limit per_page ', function () {
         ->assertJsonCount($limit, 'data')
         ->assertJsonStructure(['data' => [['uuid','name', 'provider_name', 'rocket_name']]]);
 });
+
+it('Get a launch with invalid uuid', function () {
+    Sanctum::actingAs(User::factory()->create());
+
+    $this->getJson(route('api.launchers.show', ['launcher' => \Illuminate\Support\Str::uuid()]))
+        ->assertNotFound();
+});
+
+it('Get a launch', function () {
+    Sanctum::actingAs(User::factory()->create());
+    $launch = Launch::factory()->create();
+
+    $response = $this->getJson(route('api.launchers.show', ['launcher' => $launch->getKey()]))
+        ->assertOk();
+
+    $response->assertJsonPath('data.uuid', $launch->getKey())
+        ->assertJsonPath('data.name', $launch->name)
+        ->assertJsonPath('data.provider.name', $launch->provider->name)
+        ->assertJsonPath('data.rocket.name', $launch->rocket->name)
+        ->assertJsonPath('data.status', $launch->status->value)
+        ->assertJsonPath('data.status_name', $launch->status->name());
+});
