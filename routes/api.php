@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\LaunchController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +23,6 @@ Route::middleware('auth:sanctum')->as('api.')->group(function () {
     Route::name('profile')->get('/user', static function (Request $request) {
         return $request->user();
     });
+
+    Route::resource('launchers', LaunchController::class);
 });
