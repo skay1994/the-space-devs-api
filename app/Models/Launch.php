@@ -24,11 +24,11 @@ class Launch extends Model
         'inhold' => 'boolean',
         'webcast_live' => 'boolean',
         'status' => Status::class,
-        'net' => 'datetime',
-        'window_start' => 'datetime',
-        'window_end' => 'datetime',
-        'tbdtime' => 'datetime',
-        'tbddate' => 'datetime',
+        'net' => 'datetime:Y-m-d H:i:s',
+        'window_start' => 'datetime:Y-m-d H:i:s',
+        'window_end' => 'datetime:Y-m-d H:i:s',
+        'tbdtime' => 'datetime:Y-m-d H:i:s',
+        'tbddate' => 'datetime:Y-m-d H:i:s',
     ];
 
     public function provider(): BelongsTo
