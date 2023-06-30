@@ -18,4 +18,9 @@ class Mission extends Model
     {
         return $this->belongsTo(Orbit::class);
     }
+
+    public function launch(): BelongsTo
+    {
+        return $this->belongsTo(Launch::class);
+    }
 }
