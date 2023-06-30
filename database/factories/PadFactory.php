@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Location;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
@@ -10,7 +11,7 @@ class PadFactory extends Factory
     public function definition(): array
     {
         return [
-            'location_id' => $this->faker->randomNumber(),
+            'location_id' => Location::factory(),
             'url' => $this->faker->url(),
             'agency_id' => $this->faker->randomNumber(),
             'name' => $this->faker->name(),

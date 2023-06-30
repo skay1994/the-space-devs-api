@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Pad extends Model
@@ -23,5 +24,10 @@ class Pad extends Model
     public function location(): HasOne
     {
         return $this->hasOne(Location::class);
+    }
+
+    public function launchers(): HasMany
+    {
+        return $this->hasMany(Launch::class);
     }
 }
