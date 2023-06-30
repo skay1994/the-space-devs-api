@@ -193,3 +193,20 @@ it('Update a launch failed by invalid launch_provider_id', function () {
         ->assertUnprocessable()
         ->assertJsonValidationErrorFor('launch_provider_id');
 });
+
+it('Delete a launch fail by invalid uuid', function () {
+    Sanctum::actingAs(User::factory()->create());
+    $this->deleteJson(route('api.launchers.destroy', ['launcher' => Str::uuid()]), [])
+        ->assertNotFound();
+});
+
+it('Delete a launch', function () {
+    Sanctum::actingAs(User::factory()->create());
+
+    $launch = Launch::factory()->create();
+
+    $this->deleteJson(route('api.launchers.destroy', ['launcher' => $launch->getKey()]), [])
+        ->assertOk();
+
+    $this->assertDatabaseEmpty(Launch::class);
+});

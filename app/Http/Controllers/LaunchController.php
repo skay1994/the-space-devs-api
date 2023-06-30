@@ -41,7 +41,7 @@ class LaunchController extends Controller
         return new LaunchResource($launch);
     }
 
-    public function destroy(Launch $launch)
+    public function destroy(Launch $launch): void
     {
         $launch->delete();
     }
