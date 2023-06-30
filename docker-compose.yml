@@ -6,8 +6,7 @@ services:
         build: .
         entrypoint: php artisan serve --host 0.0.0.0
         volumes:
-            - .:/usr/src/app
-        working_dir: /usr/src/app
+            - .:/var/www
         ports:
             - "8080:8000"
         networks:
