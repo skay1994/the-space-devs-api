@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use App\Enums\Status;
 use App\Models\LaunchServiceProvider;
+use App\Models\Mission;
+use App\Models\Pad;
 use App\Models\Rocket;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
@@ -16,6 +18,8 @@ class LaunchFactory extends Factory
             'uuid' => $this->faker->uuid(),
             'launch_provider_id' => LaunchServiceProvider::factory(),
             'rocket_id' => Rocket::factory(),
+            'mission_id' => Mission::factory(),
+            'pad_id' => Pad::factory(),
             'url' => $this->faker->url(),
             'launch_library_id' => $this->faker->randomNumber(),
             'name' => $this->faker->name(),
