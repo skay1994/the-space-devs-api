@@ -19,9 +19,9 @@ return new class extends Migration
                 ->constrained();
 
             $table->string('url');
-            $table->bigInteger('agency_id');
+            $table->bigInteger('agency_id')->nullable();
             $table->string('name');
-            $table->string('info_url');
+            $table->string('info_url')->nullable();
             $table->string('wiki_url');
             $table->string('map_url');
             $table->string('latitude');

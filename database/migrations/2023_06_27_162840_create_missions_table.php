@@ -18,7 +18,7 @@ return new class extends Migration
                 ->index()
                 ->constrained();
 
-            $table->bigInteger('launch_library_id');
+            $table->bigInteger('launch_library_id')->nullable();
             $table->string('name');
             $table->text('description');
             $table->string('launch_designator')->nullable();
