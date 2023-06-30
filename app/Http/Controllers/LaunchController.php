@@ -35,9 +35,10 @@ class LaunchController extends Controller
         return new LaunchResource($launch);
     }
 
-    public function update(Request $request, Launch $launch)
+    public function update(LaunchRequest $request, Launch $launch): LaunchResource
     {
-        //
+        $launch->update($request->safe()->all());
+        return new LaunchResource($launch);
     }
 
     public function destroy(Launch $launch)
