@@ -15,12 +15,13 @@ class Launch extends Model
     protected $primaryKey = 'uuid';
 
     protected $fillable = [
-        'uuid', 'status', 'url', 'launch_library_id', 'rocket_id', 'launch_provider_id', 'name', 'slug', 'net', 'window_start', 'window_end',
-        'inhold', 'tbdtime', 'tbddate', 'probability', 'holdreason', 'failreason', 'hashtag', 'webcast_live',
-        'image', 'infographic', 'program'
+        'uuid', 'status', 'url', 'launch_library_id', 'rocket_id', 'launch_provider_id', 'mission_id', 'pad_id',
+        'name', 'slug', 'net', 'window_start', 'window_end', 'imported_t', 'inhold', 'tbdtime', 'tbddate',
+        'probability', 'holdreason', 'failreason', 'hashtag', 'webcast_live', 'image', 'infographic', 'program'
     ];
 
     protected $casts = [
+        'program' => 'json',
         'inhold' => 'boolean',
         'webcast_live' => 'boolean',
         'status' => Status::class,
@@ -29,6 +30,7 @@ class Launch extends Model
         'window_end' => 'datetime:Y-m-d H:i:s',
         'tbdtime' => 'datetime:Y-m-d H:i:s',
         'tbddate' => 'datetime:Y-m-d H:i:s',
+        'imported_t' => 'datetime:Y-m-d H:i:s',
     ];
 
     public function provider(): BelongsTo
@@ -39,5 +41,15 @@ class Launch extends Model
     public function rocket(): BelongsTo
     {
         return $this->belongsTo(Rocket::class);
+    }
+
+    public function mission(): BelongsTo
+    {
+        return $this->belongsTo(Mission::class);
+    }
+
+    public function pad(): BelongsTo
+    {
+        return $this->belongsTo(Pad::class);
     }
 }
