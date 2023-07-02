@@ -99,6 +99,17 @@ it('Create a launch fail by invalid form', function () {
         ->assertJsonValidationErrorFor('inhold');
 });
 
+it('Create a launch fail by invalid status value', function () {
+    Sanctum::actingAs(User::factory()->create());
+    $launch = Launch::factory()->make();
+
+    $this->postJson(route('api.launchers.store'), [
+        ...$launch->toArray(), 'status' => 'something'
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrorFor('status');
+});
+
 it('Create a launch failed by invalid rocket_id', function () {
     Sanctum::actingAs(User::factory()->create());
     $launch = Launch::factory()->make([
@@ -168,6 +179,17 @@ it('Update a launch fail by invalid form', function () {
         ->assertJsonValidationErrorFor('url')
         ->assertJsonValidationErrorFor('status')
         ->assertJsonValidationErrorFor('inhold');
+});
+
+it('Update a launch fail by invalid status value', function () {
+    Sanctum::actingAs(User::factory()->create());
+    $launch = Launch::factory()->create();
+
+    $this->putJson(route('api.launchers.update', ['launcher' => $launch->getKey()]),[
+        ...$launch->toArray(), 'status' => 'something'
+    ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrorFor('status');
 });
 
 it('Update a launch failed by invalid rocket_id', function () {
