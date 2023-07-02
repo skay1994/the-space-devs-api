@@ -39,15 +39,22 @@ class TheSpaceDevsLaunchImport extends Command
         $limit = 100;
         $limit = ($total < $maxItems - $limit) ? 100 :  $maxItems - $total;
 
+        if($total === $maxItems) {
+            return $this->info('All launches imported');
+        }
+
         $request = Http::get('https://ll.thespacedevs.com/2.0.0/launch', ['limit' => $limit, 'offset' => $total]);
         $body = $request->json();
 
         if(array_key_exists('detail', $body)) {
-            $this->error($body['detail']);
-            return;
+            return $this->error($body['detail']);
         }
 
+        $this->info(sprintf('Importing %s launches, have already imported %s', count($body['results']), $total));
+
         foreach ($body['results'] as $item) {
+            $mission = null;
+
             unset($item['status']);
 
             $provider = LaunchServiceProvider::firstOrNew(['id' => $item['launch_service_provider']['id']]);
@@ -68,20 +75,22 @@ class TheSpaceDevsLaunchImport extends Command
             }
             unset($item['rocket']);
 
-            $orbit = Orbit::firstOrNew(['id' => $item['mission']['orbit']['id']]);
-            if(!$orbit->exists) {
-                $orbit->fill($item['mission']['orbit']);
-                $orbit->save();
-            }
-            unset($item['mission']['orbit']);
+            if(!blank($item['mission'])) {
+                $orbit = Orbit::firstOrNew(['id' => $item['mission']['orbit']['id']]);
+                if(!$orbit->exists) {
+                    $orbit->fill($item['mission']['orbit']);
+                    $orbit->save();
+                }
+                unset($item['mission']['orbit']);
 
-            $mission = Mission::firstOrNew(['id' => $item['mission']['id']]);
-            if(!$mission->exists) {
-                $mission->fill($item['mission']);
-                $mission->orbit_id = $orbit->getKey();
-                $mission->save();
+                $mission = Mission::firstOrNew(['id' => $item['mission']['id']]);
+                if(!$mission->exists) {
+                    $mission->fill($item['mission']);
+                    $mission->orbit_id = $orbit->getKey();
+                    $mission->save();
+                }
+                unset($item['mission']);
             }
-            unset($item['mission']);
 
             $location = Location::firstOrNew(['id' => $item['pad']['location']['id']]);
             if(!$location->exists) {
@@ -101,8 +110,8 @@ class TheSpaceDevsLaunchImport extends Command
             $launch = Launch::firstOrNew(['uuid' => $item['id']]);
             $launch->launch_provider_id = $provider->getKey();
             $launch->pad_id = $pad->getKey();
-            $launch->mission_id = $mission->getKey();
-            $launch->rocket_id = $rocket->getKey();
+            $launch->mission_id = $mission?->getKey();
+            $launch->rocket_id = $rocket->getKey() ?: null;
             $launch->name = $item['name'];
             $launch->slug = $item['slug'];
             $launch->net = Carbon::parse($item['net']);
