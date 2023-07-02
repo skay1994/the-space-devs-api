@@ -19,9 +19,11 @@ return new class extends Migration
         Schema::create('launches', function (Blueprint $table) {
             $table->uuid()->primary();
             $table->foreignIdFor(LaunchServiceProvider::class, 'launch_provider_id')
+                ->nullable()
                 ->index()
                 ->constrained((new LaunchServiceProvider)->getTable());
             $table->foreignIdFor(Rocket::class)
+                ->nullable()
                 ->index()
                 ->constrained();
             $table->foreignIdFor(Mission::class)

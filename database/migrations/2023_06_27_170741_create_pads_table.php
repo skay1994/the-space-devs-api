@@ -22,12 +22,12 @@ return new class extends Migration
             $table->bigInteger('agency_id')->nullable();
             $table->string('name');
             $table->string('info_url')->nullable();
-            $table->string('wiki_url');
-            $table->string('map_url');
-            $table->string('latitude');
-            $table->string('longitude');
-            $table->string('map_image');
-            $table->integer('total_launch_count');
+            $table->string('wiki_url')->nullable();
+            $table->string('map_url')->nullable();
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
+            $table->string('map_image')->nullable();
+            $table->integer('total_launch_count')->nullable();
             $table->timestamps();
         });
     }
